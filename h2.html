@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Carousel</title>
+    <link rel="stylesheet" href="stl.css">
+</head>
+
+<body>
+    <h1>NETFLIX</h1>
+    <div class="wrapper">
+        <section id="section1">
+            <a href="#section3" class="arrow__btn">‹</a>
+            <div id="section1Images" class="item"></div>
+            <a href="#section2" class="arrow__btn">›</a>
+        </section>
+        <section id="section2">
+            <a href="#section1" class="arrow__btn">‹</a>
+            <div id="section2Images" class="item"></div>
+            <a href="#section3" class="arrow__btn">›</a>
+        </section>
+        <section id="section3">
+            <a href="#section2" class="arrow__btn">‹</a>
+            <div id="section3Images" class="item"></div>
+            <a href="#section1" class="arrow__btn">›</a>
+        </section>
+    </div>
+
+    <div class="dots">
+        <span class="dot" onclick="navigateToSection('section2')"></span>
+        <span class="dot" onclick="navigateToSection('section3')"></span>
+        <span class="dot" onclick="navigateToSection('section1')"></span>
+    </div>
+
+    <script>
+        const API_KEY = '8ff96bc72df074ccaa201d96a0f17cda';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+        function navigateToSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function fetchCarouselImages() {
+            // Fetch images for section 1
+            fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`)
+                .then(response => response.json())
+                .then(data => {
+                    const images = data.results.slice(0, 3).map(movie => movie.poster_path);
+                    displayImages(images, 'section1Images');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            // Fetch images for section 2
+            fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`)
+                .then(response => response.json())
+                .then(data => {
+                    const images = data.results.slice(0, 3).map(movie => movie.poster_path);
+                    displayImages(images, 'section2Images');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            // Fetch images for section 3
+            fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}`)
+                .then(response => response.json())
+                .then(data => {
+                    const images = data.results.slice(0, 3).map(movie => movie.poster_path);
+                    displayImages(images, 'section3Images');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function displayImages(images, containerId) {
+            const container = document.getElementById(containerId);
+
+            images.forEach(image => {
+                const imgElement = document.createElement('img');
+                imgElement.src = `${IMAGE_BASE_URL}${image}`;
+                imgElement.alt = 'Image';
+
+                container.appendChild(imgElement);
+            });
+        }
+
+        // Fetch and display carousel images
+        fetchCarouselImages();
+    </script>
+</body>
+
+</html>
